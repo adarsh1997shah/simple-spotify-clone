@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Box, Grid, Typography } from '@mui/material';
-import { NavLink, Outlet } from 'react-router-dom';
+import { Box, Grid } from '@mui/material';
+import { Outlet } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import extractColors from 'extract-colors';
 
@@ -9,9 +9,13 @@ import Search from '@/common/components/Search';
 import AudioPlayer from '@/common/components/audioPlayer';
 
 import { openSnackbar } from '@/reducers/snackbar';
+import { getBackgroundColor } from './utils';
+import Tab from './components/Tab';
 
 function Home() {
-  const [colors, setColors] = useState([{ hex: '#201606' }, { hex: '#000' }]);
+  const [colors, setColors] = useState([
+    { red: 32, green: 22, blue: 6, hex: '#201606' },
+  ]);
 
   const dispatch = useDispatch();
   const { currentlyPlaying } = useSelector(state => state.music);
@@ -20,12 +24,16 @@ function Home() {
     async currentlyPlaying => {
       try {
         const colors = await extractColors(currentlyPlaying.photo, {
+          pixels: 2,
+          distance: 1,
+          lightnessDistance: 0,
+          hueDistance: 0,
+          saturationDistance: 0,
           crossOrigin: 'Anonymous',
         });
 
         setColors(colors);
       } catch (error) {
-        console.log(error);
         dispatch(openSnackbar({ severity: 'error', msg: error }));
       }
     },
@@ -43,9 +51,18 @@ function Home() {
       px={{ xs: 2, md: 4 }}
       pt={{ xs: 2, md: 4 }}
       sx={{
-        background: `linear-gradient(135deg, ${
-          colors[colors.length - 1].hex
-        } 0%, ${colors[colors.length - 1].hex} 100%)`,
+        '&::after': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          bottom: 0,
+          left: 0,
+          right: 0,
+          zIndex: -1,
+          background: getBackgroundColor(colors),
+          transition: 'opacity 1s linear',
+          opacity: 1,
+        },
         minHeight: '100vh',
         color: 'white',
       }}
@@ -60,6 +77,7 @@ function Home() {
         >
           <Navbar />
         </Grid>
+
         <Grid
           container
           spacing={2}
@@ -72,6 +90,7 @@ function Home() {
           <Grid item xs={12} md={6} lg={7}>
             <AudioPlayer />
           </Grid>
+
           <Grid item xs={12} md={6} lg={5}>
             <Box className="music-list-wrapper">
               <Box
@@ -80,35 +99,9 @@ function Home() {
                 gap={5}
                 px={{ xs: 0, md: 2 }}
               >
-                <NavLink
-                  className={({ isActive, isPending }) =>
-                    isPending ? 'pending' : isActive ? 'active' : ''
-                  }
-                  to="/for-you"
-                >
-                  <Typography
-                    variant="h6"
-                    gutterBottom
-                    sx={{ fontWeight: 'bold', opacity: 0.4 }}
-                  >
-                    For You
-                  </Typography>
-                </NavLink>
+                <Tab to="/for-you" title="For You" />
 
-                <NavLink
-                  className={({ isActive, isPending }) =>
-                    isPending ? 'pending' : isActive ? 'active' : ''
-                  }
-                  to="/top-tracks"
-                >
-                  <Typography
-                    variant="h6"
-                    gutterBottom
-                    sx={{ fontWeight: 'bold', opacity: 0.4 }}
-                  >
-                    Top Tracks
-                  </Typography>
-                </NavLink>
+                <Tab to="/top-tracks" title="Top Tracks" />
               </Box>
 
               <Search />
