@@ -1,10 +1,13 @@
 import {
   createBrowserRouter,
+  defer,
   Navigate,
   RouterProvider,
 } from 'react-router-dom';
 
-import MusicList from '@/common/components/MusicList';
+import MusicList from '@/common/components/songs';
+
+import { fetchSongs } from '@/common/services/songs';
 
 import Home from '@/views/home';
 
@@ -19,11 +22,19 @@ const router = createBrowserRouter([
       },
       {
         path: 'for-you',
+        loader: () => {
+          const promise = fetchSongs(1);
+          return defer({ data: promise });
+        },
         element: <MusicList />,
       },
       {
         path: 'top-tracks',
-        element: <div>Top tracks</div>,
+        loader: () => {
+          const promise = fetchSongs(2);
+          return defer({ data: promise });
+        },
+        element: <MusicList />,
       },
     ],
   },

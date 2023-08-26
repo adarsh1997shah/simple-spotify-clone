@@ -1,12 +1,12 @@
+import { useCallback, useEffect, useState } from 'react';
 import { Box, Grid, Typography } from '@mui/material';
 import { NavLink, Outlet } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import extractColors from 'extract-colors';
 
 import Navbar from '@/common/components/Navbar';
 import Search from '@/common/components/Search';
-import AudioPlayer from '@/common/components/AudioPlayer';
-import { useSelector } from 'react-redux';
-import { useCallback, useEffect, useState } from 'react';
-import extractColors from 'extract-colors';
+import AudioPlayer from '@/common/components/audioPlayer';
 
 function Home() {
   const { currentlyPlaying } = useSelector(state => state.music);

@@ -16,7 +16,9 @@ function CustomAudioPlayer() {
   const playerRef = useRef();
 
   const dispatch = useDispatch();
-  const { data, currentlyPlaying } = useSelector(state => state.music);
+  const { currentlyPlaying, currentPlaylist } = useSelector(
+    state => state.music
+  );
 
   useEffect(() => {
     const audioRef = playerRef.current.audio;
@@ -34,18 +36,22 @@ function CustomAudioPlayer() {
   }, [currentlyPlaying]);
 
   const handlePrevious = () => {
-    const index = data.findIndex(({ _id }) => _id == currentlyPlaying._id);
+    const index = currentPlaylist.findIndex(
+      ({ _id }) => _id == currentlyPlaying._id
+    );
 
-    if (index != 0) {
-      dispatch(setCurrentlyPlaying(data[index - 1]));
+    if (index > -1 && index != 0) {
+      dispatch(setCurrentlyPlaying(currentPlaylist[index - 1]));
     }
   };
 
   const handleNext = () => {
-    const index = data.findIndex(({ _id }) => _id == currentlyPlaying._id);
+    const index = currentPlaylist.findIndex(
+      ({ _id }) => _id == currentlyPlaying._id
+    );
 
-    if (index != data.length - 1) {
-      dispatch(setCurrentlyPlaying(data[index + 1]));
+    if (index > -1 && index != currentPlaylist.length - 1) {
+      dispatch(setCurrentlyPlaying(currentPlaylist[index + 1]));
     }
   };
 

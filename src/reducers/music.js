@@ -1,18 +1,24 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { MUSIC_LIST } from '@/mocks/musicList';
-
 const initialState = {
-  data: MUSIC_LIST,
-  filteredData: MUSIC_LIST,
+  data: [],
+  filteredData: [],
   currentTab: '',
   currentlyPlaying: null,
+  currentPlaylist: [],
 };
 
 const musicSlice = createSlice({
   name: 'music',
   initialState,
   reducers: {
+    setSongs: (state, action) => {
+      state.data = action.payload;
+      state.filteredData = state.data;
+    },
+    setCurrentPlaylist: state => {
+      state.currentPlaylist = state.data;
+    },
     setCurrentlyPlaying: (state, action) => {
       state.currentlyPlaying = action.payload;
     },
@@ -22,6 +28,11 @@ const musicSlice = createSlice({
   },
 });
 
-export const { setCurrentlyPlaying, setFilteredData } = musicSlice.actions;
+export const {
+  setCurrentlyPlaying,
+  setFilteredData,
+  setSongs,
+  setCurrentPlaylist,
+} = musicSlice.actions;
 
 export default musicSlice.reducer;
