@@ -1,24 +1,36 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Box, Grid, Typography } from '@mui/material';
 import { NavLink, Outlet } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import extractColors from 'extract-colors';
 
 import Navbar from '@/common/components/Navbar';
 import Search from '@/common/components/Search';
 import AudioPlayer from '@/common/components/audioPlayer';
 
+import { openSnackbar } from '@/reducers/snackbar';
+
 function Home() {
-  const { currentlyPlaying } = useSelector(state => state.music);
   const [colors, setColors] = useState([{ hex: '#201606' }, { hex: '#000' }]);
 
-  const getColorFromImage = useCallback(async currentlyPlaying => {
-    const colors = await extractColors(currentlyPlaying.photo, {
-      crossOrigin: 'Anonymous',
-    });
+  const dispatch = useDispatch();
+  const { currentlyPlaying } = useSelector(state => state.music);
 
-    setColors(colors);
-  }, []);
+  const getColorFromImage = useCallback(
+    async currentlyPlaying => {
+      try {
+        const colors = await extractColors(currentlyPlaying.photo, {
+          crossOrigin: 'Anonymous',
+        });
+
+        setColors(colors);
+      } catch (error) {
+        console.log(error);
+        dispatch(openSnackbar({ severity: 'error', msg: error }));
+      }
+    },
+    [dispatch]
+  );
 
   useEffect(() => {
     if (currentlyPlaying) {

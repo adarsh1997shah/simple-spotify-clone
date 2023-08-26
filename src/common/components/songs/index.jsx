@@ -18,6 +18,7 @@ import {
   setSongs,
   setCurrentPlaylist,
 } from '@/reducers/music';
+import { openSnackbar } from '@/reducers/snackbar';
 
 import { Loader } from './components/Loader';
 
@@ -49,20 +50,20 @@ function Songs() {
         dispatch(setSongs(data?.data?.data?.getSongs || []));
       })
       ?.catch(err => {
-        console.log(err);
+        dispatch(openSnackbar({ severity: 'error', msg: err }));
       });
   }, [songsPromise, dispatch]);
 
   return (
-    <Suspense fallback={<Loader />}>
-      <Await resolve={songsPromise} errorElement={<p>Error loading data</p>}>
-        <Box
-          className="music-list-container"
-          sx={{
-            maxHeight: { xs: 'none', sm: '44vh', md: '77vh' },
-            overflowY: { xs: 'none', sm: 'scroll' },
-          }}
-        >
+    <Box
+      className="music-list-container"
+      sx={{
+        height: { xs: 'none', sm: '44vh', md: '77vh' },
+        overflowY: { xs: 'none', sm: 'scroll' },
+      }}
+    >
+      <Suspense fallback={<Loader />}>
+        <Await resolve={songsPromise} errorElement={<p>Error loading songs</p>}>
           <List sx={{ bgcolor: 'transparent' }}>
             {filteredData.map(({ _id, title, photo, duration, artist }) => {
               const { min, seconds } = getMinAndSec(duration);
@@ -110,9 +111,9 @@ function Songs() {
               );
             })}
           </List>
-        </Box>
-      </Await>
-    </Suspense>
+        </Await>
+      </Suspense>
+    </Box>
   );
 }
 
