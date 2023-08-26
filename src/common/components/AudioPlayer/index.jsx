@@ -8,6 +8,7 @@ import { Next } from '@/assets/svg/next';
 import { Previous } from '@/assets/svg/previous';
 
 import { setCurrentlyPlaying } from '@/reducers/music';
+import { openSnackbar } from '@/reducers/snackbar';
 
 import 'react-h5-audio-player/lib/styles.css';
 import './index.css';
@@ -55,6 +56,10 @@ function CustomAudioPlayer() {
     }
   };
 
+  const handleError = () => {
+    dispatch(openSnackbar({ severity: 'error', msg: 'Media error occurred' }));
+  };
+
   return (
     <Box
       px={{ mg: 0, lg: 12, height: '100%' }}
@@ -84,7 +89,7 @@ function CustomAudioPlayer() {
       <Box
         className="cover-image-container"
         sx={{
-          bgcolor: 'rgba(255,255,255,0.4)',
+          bgcolor: 'rgba(255,255,255,0.1)',
           backdropFilter: 'blur(40px)',
           height: { sm: '100%', md: '300px' },
           width: '100%',
@@ -101,6 +106,7 @@ function CustomAudioPlayer() {
       </Box>
 
       <AudioPlayer
+        className={`${currentlyPlaying ? '' : 'audio-disable'}`}
         ref={playerRef}
         src={currentlyPlaying?.url}
         onClickPrevious={handlePrevious}
@@ -115,6 +121,7 @@ function CustomAudioPlayer() {
           RHAP_UI.CURRENT_TIME,
           RHAP_UI.DURATION,
         ]}
+        onError={handleError}
       />
     </Box>
   );

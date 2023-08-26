@@ -5,12 +5,18 @@
   padding-right: 0;
 }
 
+.rhap_container.audio-disable {
+  opacity: 0.2;
+}
+
 .rhap_container .rhap_button-clear.rhap_main-controls-button.rhap_skip-button {
   opacity: 0.4;
 }
 
 .rhap_container
-  .rhap_button-clear.rhap_main-controls-button.rhap_skip-button:hover {
+  .rhap_button-clear.rhap_main-controls-button.rhap_skip-button:hover:not(
+    [disabled]
+  ) {
   opacity: 1;
 }
 
@@ -32,9 +38,11 @@
 }
 
 .rhap_container
-  .rhap_button-clear.rhap_main-controls-button.rhap_play-pause-button:hover,
-.rhap_container .rhap_volume-container:hover,
-.rhap_container .rhap_button-clear.rhap_repeat-button:hover {
+  .rhap_button-clear.rhap_main-controls-button.rhap_play-pause-button:hover:not(
+    [disabled]
+  ),
+.rhap_container .rhap_volume-container:hover:not([disabled]),
+.rhap_container .rhap_button-clear.rhap_repeat-button:hover:not([disabled]) {
   opacity: 1;
 }
 
