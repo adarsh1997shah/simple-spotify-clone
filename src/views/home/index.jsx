@@ -3,6 +3,7 @@ import { Box, Grid } from '@mui/material';
 import { Outlet } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import extractColors from 'extract-colors';
+import { motion } from 'framer-motion';
 
 import Navbar from '@/common/components/Navbar';
 import Search from '@/common/components/Search';
@@ -13,9 +14,10 @@ import { getBackgroundColor } from './utils';
 import Tab from './components/Tab';
 
 function Home() {
-  const [colors, setColors] = useState([
-    { red: 32, green: 22, blue: 6, hex: '#201606' },
-  ]);
+  const [colors, setColors] = useState({
+    initial: [{ red: 32, green: 22, blue: 6, hex: '#201606' }],
+    current: [{ red: 32, green: 22, blue: 6, hex: '#201606' }],
+  });
 
   const dispatch = useDispatch();
   const { currentlyPlaying } = useSelector(state => state.music);
@@ -32,7 +34,7 @@ function Home() {
           crossOrigin: 'Anonymous',
         });
 
-        setColors(colors);
+        setColors(prev => ({ initial: prev.current, current: colors }));
       } catch (error) {
         dispatch(openSnackbar({ severity: 'error', msg: error }));
       }
@@ -48,21 +50,18 @@ function Home() {
 
   return (
     <Box
+      component={motion.div}
       px={{ xs: 2, md: 4 }}
       pt={{ xs: 2, md: 4 }}
+      animate={{
+        background: [
+          getBackgroundColor(colors.initial),
+          getBackgroundColor(colors.current),
+        ],
+      }}
+      initial={false}
+      transition={{ delay: 0.2, duration: 0.5, ease: 'linear' }}
       sx={{
-        '&::after': {
-          content: '""',
-          position: 'absolute',
-          top: 0,
-          bottom: 0,
-          left: 0,
-          right: 0,
-          zIndex: -1,
-          background: getBackgroundColor(colors),
-          transition: 'opacity 1s linear',
-          opacity: 1,
-        },
         minHeight: '100vh',
         color: 'white',
       }}

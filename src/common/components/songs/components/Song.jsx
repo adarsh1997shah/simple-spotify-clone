@@ -62,7 +62,7 @@ function Song({ song, onClick }) {
 
 Song.propTypes = {
   song: PropTypes.object,
-  onClick: PropTypes.function,
+  onClick: PropTypes.func,
 };
 
 export default Song;
