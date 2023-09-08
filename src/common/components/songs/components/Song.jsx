@@ -14,7 +14,9 @@ import { getMinAndSec } from '@/common/utils/time';
 import playingMusic from '@/assets/gifs/playing-music.gif';
 
 function Song({ song, onClick }) {
-	const { currentlyPlaying } = useSelector((state) => state.music);
+	const { currentlyPlaying, isCurrentlyPlayingPaused } = useSelector(
+		(state) => state.music
+	);
 
 	const { _id, title, photo, duration, artist } = song;
 
@@ -52,7 +54,7 @@ function Song({ song, onClick }) {
 					}}
 				/>
 
-				{isCurrentlyPlaying && (
+				{isCurrentlyPlaying && !isCurrentlyPlayingPaused && (
 					<Avatar
 						sx={{ width: 30, height: 30, mr: 3 }}
 						src={playingMusic}

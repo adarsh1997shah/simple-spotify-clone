@@ -7,7 +7,7 @@ import { Avatar, CircularProgress, Typography } from '@mui/material';
 import { Next } from '@/assets/svg/next';
 import { Previous } from '@/assets/svg/previous';
 
-import { setCurrentlyPlaying } from '@/reducers/music';
+import { setCurrentlyPlaying, setIsCurrentlyPlayingPaused } from '@/reducers/music';
 import { openSnackbar } from '@/reducers/snackbar';
 
 import 'react-h5-audio-player/lib/styles.css';
@@ -130,6 +130,8 @@ function CustomAudioPlayer() {
 				]}
 				onError={handleError}
 				onCanPlay={() => setIsAudioLoading(false)}
+				onPause={() => dispatch(setIsCurrentlyPlayingPaused(true))}
+				onPlay={() => dispatch(setIsCurrentlyPlayingPaused())}
 			/>
 		</Box>
 	);
