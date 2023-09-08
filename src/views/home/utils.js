@@ -1,5 +1,5 @@
-export function getBackgroundColor(colors) {
-  const color1 = colors[0];
+export function getBackgroundColor(color) {
+	const [red, green, blue] = color;
 
-  return `linear-gradient(135deg, rgba(${color1.red},${color1.green},${color1.blue}, 0.5) 0%, rgba(${color1.red},${color1.green},${color1.blue}, 1) 100%)`;
+	return `linear-gradient(135deg, rgba(${red},${green},${blue}, 0.5) 0%, rgba(${red},${green},${blue}, 1) 100%)`;
 }

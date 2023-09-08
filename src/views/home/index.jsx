@@ -2,8 +2,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { Box, Grid } from '@mui/material';
 import { Outlet } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import extractColors from 'extract-colors';
 import { motion } from 'framer-motion';
+import ColorThief from 'colorthief';
 
 import Navbar from '@/common/components/Navbar';
 import Search from '@/common/components/Search';
@@ -14,104 +14,92 @@ import { getBackgroundColor } from './utils';
 import Tab from './components/Tab';
 
 function Home() {
-  const [colors, setColors] = useState({
-    initial: [{ red: 32, green: 22, blue: 6, hex: '#201606' }],
-    current: [{ red: 32, green: 22, blue: 6, hex: '#201606' }],
-  });
+	const [colors, setColors] = useState({ initial: [32, 22, 6], current: [32, 22, 6] });
 
-  const dispatch = useDispatch();
-  const { currentlyPlaying } = useSelector(state => state.music);
+	const dispatch = useDispatch();
+	const { currentlyPlaying } = useSelector((state) => state.music);
 
-  const getColorFromImage = useCallback(
-    async currentlyPlaying => {
-      try {
-        const colors = await extractColors(currentlyPlaying.photo, {
-          pixels: 2,
-          distance: 1,
-          lightnessDistance: 0,
-          hueDistance: 0,
-          saturationDistance: 0,
-          crossOrigin: 'Anonymous',
-        });
+	const getColorFromImage = useCallback(
+		(currentlyPlaying) => {
+			try {
+				const colorThief = new ColorThief();
+				const img = new Image();
+				img.crossOrigin = 'Anonymous'; // Setting it to prevent image url to be painted on canvas without CORS issue, but some image still have it.
 
-        setColors(prev => ({ initial: prev.current, current: colors }));
-      } catch (error) {
-        dispatch(openSnackbar({ severity: 'error', msg: error }));
-      }
-    },
-    [dispatch]
-  );
+				img.addEventListener('load', () => {
+					const rgb = colorThief.getColor(img);
+					setColors((prev) => ({ initial: prev.current, current: rgb }));
+				});
 
-  useEffect(() => {
-    if (currentlyPlaying) {
-      getColorFromImage(currentlyPlaying);
-    }
-  }, [getColorFromImage, currentlyPlaying]);
+				img.src = currentlyPlaying.photo;
+			} catch (error) {
+				dispatch(openSnackbar({ severity: 'error', msg: error }));
+			}
+		},
+		[dispatch]
+	);
 
-  return (
-    <Box
-      component={motion.div}
-      px={{ xs: 2, md: 4 }}
-      pt={{ xs: 2, md: 4 }}
-      animate={{
-        background: [
-          getBackgroundColor(colors.initial),
-          getBackgroundColor(colors.current),
-        ],
-      }}
-      initial={false}
-      transition={{ delay: 0.2, duration: 0.5, ease: 'linear' }}
-      sx={{
-        minHeight: '100vh',
-        color: 'white',
-      }}
-    >
-      <Grid container spacing={2}>
-        <Grid
-          item
-          xs={0}
-          sm={4}
-          md={2.5}
-          sx={{ display: { xs: 'none', sm: 'block' } }}
-        >
-          <Navbar />
-        </Grid>
+	useEffect(() => {
+		if (currentlyPlaying) {
+			getColorFromImage(currentlyPlaying);
+		}
+	}, [getColorFromImage, currentlyPlaying]);
 
-        <Grid
-          container
-          spacing={2}
-          item
-          xs={12}
-          sm={8}
-          md={9.5}
-          direction={{ md: 'row-reverse' }}
-        >
-          <Grid item xs={12} md={6} lg={7}>
-            <AudioPlayer />
-          </Grid>
+	return (
+		<Box
+			component={motion.div}
+			px={{ xs: 2, md: 4 }}
+			pt={{ xs: 2, md: 4 }}
+			animate={{
+				background: [
+					getBackgroundColor(colors.initial),
+					getBackgroundColor(colors.current),
+				],
+			}}
+			initial={false}
+			transition={{ delay: 0.1, duration: 0.3, ease: 'linear' }}
+			sx={{
+				minHeight: '100vh',
+				color: 'white',
+			}}>
+			<Grid container spacing={2}>
+				<Grid item xs={0} sm={4} md={2.5} sx={{ display: { xs: 'none', sm: 'block' } }}>
+					<Navbar />
+				</Grid>
 
-          <Grid item xs={12} md={6} lg={5}>
-            <Box className="music-list-wrapper">
-              <Box
-                className="music-list-nav-wrap"
-                display="flex"
-                gap={5}
-                px={{ xs: 0, md: 2 }}
-              >
-                <Tab to="/for-you" title="For You" />
+				<Grid
+					container
+					spacing={2}
+					item
+					xs={12}
+					sm={8}
+					md={9.5}
+					direction={{ md: 'row-reverse' }}>
+					<Grid item xs={12} md={6} lg={7}>
+						<AudioPlayer />
+					</Grid>
 
-                <Tab to="/top-tracks" title="Top Tracks" />
-              </Box>
+					<Grid item xs={12} md={6} lg={5}>
+						<Box className="music-list-wrapper">
+							<Box
+								className="music-list-nav-wrap"
+								display="flex"
+								gap={5}
+								px={{ xs: 0, md: 2 }}>
+								<Tab to="/for-you" title="For You" />
 
-              <Search />
+								<Tab to="/top-tracks" title="Top Tracks" />
+							</Box>
 
-              <Outlet />
-            </Box>
-          </Grid>
-        </Grid>
-      </Grid>
-    </Box>
-  );
+							<Search />
+
+							<Outlet />
+						</Box>
+					</Grid>
+				</Grid>
+			</Grid>
+		</Box>
+	);
 }
 
 export default Home;

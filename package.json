@@ -16,7 +16,7 @@
     "@mui/material": "^5.14.5",
     "@reduxjs/toolkit": "^1.9.5",
     "axios": "^1.4.0",
-    "extract-colors": "^3.0.0",
+    "colorthief": "^2.4.0",
     "framer-motion": "^10.16.1",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
