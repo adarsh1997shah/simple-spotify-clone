@@ -70,7 +70,8 @@ function CustomAudioPlayer() {
 			display="flex"
 			flexDirection="column"
 			justifyContent="center"
-			className="audio-player-container">
+			className="audio-player-container"
+		>
 			<Box display="flex" gap={4}>
 				<Avatar
 					alt="Remy Sharp"
@@ -99,7 +100,8 @@ function CustomAudioPlayer() {
 					borderRadius: 2,
 					display: { xs: 'none', md: 'block' },
 				}}
-				mt={2}>
+				mt={2}
+			>
 				{currentlyPlaying?.photo ? (
 					<img src={currentlyPlaying.photo} alt="cover-image" />
 				) : (
